@@ -1,5 +1,6 @@
 package com.example.farmereazyagric.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 
@@ -19,6 +20,6 @@ interface ExpenseDao {
     fun getExpenseById(expenseId: Int): Expense?
 
     @Query("SELECT * FROM expense_table")
-    fun getAllExpenses(): List<Expense>
+    fun getAllExpenses(): LiveData<List<Expense>>
 
 }

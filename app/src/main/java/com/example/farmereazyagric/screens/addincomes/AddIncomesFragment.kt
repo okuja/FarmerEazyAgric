@@ -5,56 +5,43 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.example.farmereazyagric.R
+import com.example.farmereazyagric.databinding.FragmentAddIncomesBinding
+import com.example.farmereazyagric.screens.incomes.IncomeViewModel
+import com.example.farmereazyagric.screens.incomes.IncomeViewModelFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AddIncomesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddIncomesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var viewModel: AddIncomesViewModel
+    private lateinit var viewModelFactory: AddIncomesViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_incomes, container, false)
-    }
+        val binding:FragmentAddIncomesBinding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_add_incomes,
+                container,
+                false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddIncomesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddIncomesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        val application = requireNotNull(this.activity).application
+
+        viewModelFactory = AddIncomesViewModelFactory(application)
+
+        viewModel =  ViewModelProvider(this).get(AddIncomesViewModel::class.java)
+
+        binding.doneButton.setOnClickListener { view: View -> view.findNavController().navigate(R.id.action_addIncomesFragment_to_incomeFragment)  }
+
+        binding.setLifecycleOwner(viewLifecycleOwner)
+
+        binding.viewModel = viewModel
+
+        return binding.root
     }
 }

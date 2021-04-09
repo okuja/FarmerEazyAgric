@@ -3,22 +3,31 @@ package com.example.farmereazyagric.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.farmereazyagric.models.DomainIncome
 
 @Entity(tableName = "income_table")
 data class Income(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "income_id")
-    var id: Int,
+    var id:Int? = null,
 
     @ColumnInfo(name = "amount")
-    val amount: Double ,
+    var amount: Double = 0.0,
 
     @ColumnInfo(name = "description")
-    val description: String="" ,
+    var description: String="" ,
 
     @ColumnInfo(name = "fromWho")
-    val fromWho: String=""
-
-
+    var fromWho: String=""
 )
+
+fun Income.asDomainModel(): DomainIncome {
+    return DomainIncome(
+        this.id.toString(),
+        this.amount.toString(),
+        this.description,
+        this.fromWho
+    )
+
+}

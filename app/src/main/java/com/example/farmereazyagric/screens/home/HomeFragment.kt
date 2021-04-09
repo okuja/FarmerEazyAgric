@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
                 view:View-> view.findNavController().navigate(R.id.action_homeFragment_to_incomeFragment)
         }
         binding.addIncomes.setOnClickListener{
-                view:View-> view.findNavController().navigate(R.id.action_homeFragment_to_addExpensesFragment)
+                view:View-> view.findNavController().navigate(R.id.action_homeFragment_to_addIncomesFragment)
         }
         binding.addExpenses.setOnClickListener{
                 view:View-> view.findNavController().navigate(R.id.action_homeFragment_to_addExpensesFragment)

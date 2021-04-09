@@ -1,30 +1,29 @@
-package com.example.farmereazyagric.screens.incomes
+package com.example.farmereazyagric.screens.incomedetail
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import android.util.Log
+import androidx.lifecycle.*
 import com.example.farmereazyagric.database.AppDatabase
 import com.example.farmereazyagric.database.Income
+import com.example.farmereazyagric.database.asDomainModel
+import com.example.farmereazyagric.models.DomainIncome
 import com.example.farmereazyagric.repositories.IncomesRepository
 import kotlinx.coroutines.*
 
-class IncomeViewModel(application: Application) :AndroidViewModel(application) {
+class IncomeDetailViewModel (application: Application,id: Int) : AndroidViewModel(application) {
     /**
      * The data source this ViewModel will fetch results from.
      */
     private val incomesRepository = IncomesRepository(AppDatabase.getInstance(application))
 
-
-    val incomes = incomesRepository.incomes
+    val incomeId = id
 
     private val viewModelJob = Job()
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     init {
-        refreshDataFromRepository()
+         getItem(id)
     }
 
     private val _navigateToDetail = MutableLiveData<Int>()
@@ -36,23 +35,33 @@ class IncomeViewModel(application: Application) :AndroidViewModel(application) {
         get() = _selectedItemId
 
 
-    private fun refreshDataFromRepository() {
+    private val _item = MutableLiveData<DomainIncome?>()
+    val item: LiveData<DomainIncome?>
+        get() = _item
+
+
+    private  fun getItem(id:Int) {
         viewModelScope.launch {
-                incomesRepository.getAllIncomes()
+            val income = incomesRepository.getIncomeById(id)
+            _item.value = income?.asDomainModel()
         }
     }
 
-    fun deleteDataFromRepository(id :Int){
-        uiScope.launch {
+    fun updateDataFromRepository(amount:String,reason:String,fromWho:String){
+        uiScope.launch{
+            val newIncome = Income()
+            newIncome.amount = amount.toDouble()
+            newIncome.description = reason
+            newIncome.fromWho = fromWho
+            newIncome.id=incomeId
+
             withContext(Dispatchers.IO){
-                incomesRepository.deleteIncome(id)
+                incomesRepository.updateIncome(newIncome)
             }
         }
+        _navigateToDetail.value = incomeId
     }
 
-//    fun onDeleteItemClicked(id:Int){
-//        _selectedItemId.value = id
-//    }
 
     fun onItemClicked(id:Int){
         _navigateToDetail.value = id

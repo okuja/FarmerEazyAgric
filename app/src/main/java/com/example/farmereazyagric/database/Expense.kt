@@ -10,10 +10,10 @@ data class Expense(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "expense_id")
-    var id: Int,
+    var id: Int?=null,
 
     @ColumnInfo(name = "amount")
-    val amount: Double ,
+    val amount: Double=0.0 ,
 
     @ColumnInfo(name = "description")
     val description: String="" ,
