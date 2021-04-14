@@ -7,12 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.farmereazyagric.R
 import com.example.farmereazyagric.databinding.FragmentAddIncomesBinding
-import com.example.farmereazyagric.screens.incomes.IncomeViewModel
-import com.example.farmereazyagric.screens.incomes.IncomeViewModelFactory
 
 
 class AddIncomesFragment : Fragment() {

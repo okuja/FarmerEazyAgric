@@ -1,16 +1,15 @@
-package com.example.farmereazyagric.screens.incomes
+package com.example.farmereazyagric.screens.expenses
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.farmereazyagric.database.Income
-import com.example.farmereazyagric.databinding.IncomeItemBinding
+import com.example.farmereazyagric.database.Expense
+import com.example.farmereazyagric.databinding.ExpenseItemBinding
 
-class IncomeAdapter(val clickListener : IncomeListener,val clickDeleteListener : IncomeListener):
-    ListAdapter<Income,IncomeAdapter.ViewHolder>(IncomeDiffCallback())
+class ExpenseAdapter(val clickListener : ExpenseListener,val clickDeleteListener : ExpenseListener):
+    ListAdapter<Expense, ExpenseAdapter.ViewHolder>(ExpenseDiffCallback())
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -21,20 +20,20 @@ class IncomeAdapter(val clickListener : IncomeListener,val clickDeleteListener :
     }
 
 
-    class ViewHolder private constructor(val binding: IncomeItemBinding) :
+    class ViewHolder private constructor(val binding: ExpenseItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: Income,
-            clickListener: IncomeListener,
-            clickDeleteListener: IncomeListener
+            item: Expense,
+            clickListener: ExpenseListener,
+            clickDeleteListener: ExpenseListener
         ) {
             //format the data to display from here
             // if expenses show red if incomes show green
             binding.amount.text = item.amount.toString()
             binding.description.text = item.description
-            binding.from.text = item.fromWho
-            binding.income = item
+            binding.from.text = item.onWhat
+            binding.expense = item
             binding.clickListener = clickListener
             binding.clickDeleteListener = clickDeleteListener
             binding.executePendingBindings()
@@ -43,7 +42,7 @@ class IncomeAdapter(val clickListener : IncomeListener,val clickDeleteListener :
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = IncomeItemBinding.inflate(layoutInflater, parent, false)
+                val binding = ExpenseItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
@@ -51,18 +50,18 @@ class IncomeAdapter(val clickListener : IncomeListener,val clickDeleteListener :
 
 }
 
-class IncomeListener(val clickListener: (incomeId: Int) -> Unit) {
-    fun onClick(income: Income) = clickListener(income.id!!)
+class ExpenseListener(val clickListener: (expenseId: Int) -> Unit) {
+    fun onClick(expense: Expense) = clickListener(expense.id!!)
 }
 
 
 //implementing diffutil
-class IncomeDiffCallback : DiffUtil.ItemCallback<Income>() {
-    override fun areItemsTheSame(oldItem: Income, newItem: Income): Boolean {
+class ExpenseDiffCallback : DiffUtil.ItemCallback<Expense>() {
+    override fun areItemsTheSame(oldItem: Expense, newItem: Expense): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Income, newItem: Income): Boolean {
+    override fun areContentsTheSame(oldItem: Expense, newItem: Expense): Boolean {
         return oldItem == newItem
     }
 }

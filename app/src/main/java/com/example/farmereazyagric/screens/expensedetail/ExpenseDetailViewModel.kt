@@ -1,4 +1,4 @@
-package com.example.farmereazyagric.screens.expenses
+package com.example.farmereazyagric.screens.expensedetail
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,21 +6,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.farmereazyagric.database.AppDatabase
+import com.example.farmereazyagric.database.Expense
+import com.example.farmereazyagric.database.asDomainModel
+import com.example.farmereazyagric.models.DomainExpense
 import com.example.farmereazyagric.repositories.ExpensesRepository
 import kotlinx.coroutines.*
 
-class ExpenseViewModel(application: Application) :AndroidViewModel(application) {
-
+class ExpenseDetailViewModel (application: Application, id: Int) : AndroidViewModel(application) {
+    /**
+     * The data source this ViewModel will fetch results from.
+     */
     private val expensesRepository = ExpensesRepository(AppDatabase.getInstance(application))
 
-    val expenses = expensesRepository.expenses
+    val expenseId = id
 
     private val viewModelJob = Job()
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     init {
-        refreshDataFromRepository()
+        getItem(id)
     }
 
     private val _navigateToDetail = MutableLiveData<Int>()
@@ -32,19 +37,33 @@ class ExpenseViewModel(application: Application) :AndroidViewModel(application) 
         get() = _selectedItemId
 
 
-    private fun refreshDataFromRepository() {
+    private val _item = MutableLiveData<DomainExpense?>()
+    val item: LiveData<DomainExpense?>
+        get() = _item
+
+
+    private  fun getItem(id:Int) {
         viewModelScope.launch {
-            expensesRepository.getAllExpenses()
+            val expense = expensesRepository.getExpenseById(id)
+            _item.value = expense?.asDomainModel()
         }
     }
 
-    fun deleteDataFromRepository(id :Int){
-        uiScope.launch {
+    fun updateDataFromRepository(amount:String,reason:String,onWhat:String){
+        uiScope.launch{
+            val newExpense = Expense()
+            newExpense.amount = amount.toDouble()
+            newExpense.description = reason
+            newExpense.onWhat = onWhat
+            newExpense.id=expenseId
+
             withContext(Dispatchers.IO){
-                expensesRepository.deleteExpense(id)
+                expensesRepository.updateExpense(newExpense)
             }
         }
+        _navigateToDetail.value = expenseId
     }
+
 
     fun onItemClicked(id:Int){
         _navigateToDetail.value = id
@@ -58,4 +77,6 @@ class ExpenseViewModel(application: Application) :AndroidViewModel(application) 
         super.onCleared()
         viewModelJob.cancel()
     }
+
+
 }

@@ -50,10 +50,6 @@ class IncomeViewModel(application: Application) :AndroidViewModel(application) {
         }
     }
 
-//    fun onDeleteItemClicked(id:Int){
-//        _selectedItemId.value = id
-//    }
-
     fun onItemClicked(id:Int){
         _navigateToDetail.value = id
     }
